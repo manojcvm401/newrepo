@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodConnect | Smart Food Donation Management System</title>
+<meta name="description" content="FoodConnect connects surplus food from hotels, restaurants, and hostels with nearby NGOs and volunteers to prevent food waste.">
+<meta property="og:title" content="FoodConnect | Smart Food Donation Management System">
+<meta property="og:description" content="FoodConnect connects surplus food from hotels, restaurants, and hostels with nearby NGOs and volunteers to prevent food waste.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="api.js"></script>
+<style>
+  :root{
+    --bg:#F6FAF6;
+    --surface:#FFFFFF;
+    --green-950:#0F2A1F;
+    --green-900:#153A2A;
+    --green-700:#1F6F49;
+    --green-600:#278758;
+    --green-500:#2F9D67;
+    --green-soft:#E4F3E8;
+    --green-soft-2:#EFF8F1;
+    --amber:#D98F2B;
+    --amber-soft:#FBEDD9;
+    --red:#C1473C;
+    --red-soft:#FBE6E3;
+    --blue:#2E6CA4;
+    --blue-soft:#E4EEF7;
+    --text:#16211B;
+    --text-muted:#5A6B60;
+    --text-faint:#8B978E;
+    --border:#DDE8DF;
+    --border-soft:#EAF1EA;
+    --radius:14px;
+    --radius-sm:9px;
+    --shadow:0 1px 2px rgba(15,42,31,.04), 0 6px 20px rgba(15,42,31,.05);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(rgba(47,157,103,.07) 1px,transparent 1px);
+    background-size:22px 22px;
+  }
+  h1,h2,h3,h4{
+    font-family:'Space Grotesk',sans-serif;
+    margin:0;
+    color:var(--green-950);
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  ::selection{background:var(--green-soft);}
+
+  /* Utility */
+  .hidden{display:none !important;}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    padding:10px 18px;border-radius:999px;border:1px solid transparent;
+    font-weight:600;font-size:14px;transition:transform .12s ease, box-shadow .12s ease, background .15s ease;
+  }
+  .btn:active{transform:scale(.97);}
+  .btn-primary{background:linear-gradient(135deg,#1F6F49,#2F9D67);color:#fff;}
+  .btn-primary:hover{background:var(--green-600);box-shadow:0 4px 14px rgba(31,111,73,.25);}
+  .btn-ghost{background:transparent;border-color:var(--border);color:var(--text);}
+  .btn-ghost:hover{border-color:var(--green-600);color:var(--green-700);}
+  .btn-danger{background:var(--red-soft);color:var(--red);}
+  .btn-danger:hover{background:#f6d3ce;}
+  .btn-sm{padding:6px 12px;font-size:12.5px;border-radius:999px;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+
+  .badge{
+    display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:999px;
+    font-size:12px;font-weight:600;white-space:nowrap;
+  }
+  .badge-green{background:var(--green-soft);color:var(--green-700);}
+  .badge-amber{background:var(--amber-soft);color:var(--amber);}
+  .badge-red{background:var(--red-soft);color:var(--red);}
+  .badge-blue{background:var(--blue-soft);color:var(--blue);}
+  .badge-grey{background:#EEF1EF;color:var(--text-muted);}
+
+  .card{
+    background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius);
+    box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease;
+  }
+  .card:hover{box-shadow:0 10px 30px rgba(15,42,31,.10);}
+
+  /* Landing */
+  #landing{min-height:100vh;background:radial-gradient(1200px 500px at 85% -10%, rgba(47,157,103,.10), transparent 60%), var(--bg);}
+  .land-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 6%;}
+  .logo{display:flex;align-items:center;gap:9px;font-family:'Space Grotesk';font-weight:700;font-size:20px;color:var(--green-950);}
+  .logo-mark{width:30px;height:30px;border-radius:9px;background:var(--green-700);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;}
+  .land-nav-links{display:flex;gap:28px;font-size:14.5px;color:var(--text-muted);font-weight:500;}
+  .land-nav-links a:hover{color:var(--green-700);}
+
+  .hero{padding:64px 6% 40px;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+  .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--green-soft);color:var(--green-700);
+      padding:6px 14px;border-radius:999px;font-size:13px;font-weight:600;margin-bottom:22px;}
+  .hero h1{font-size:46px;line-height:1.08;margin-bottom:18px;}
+  .hero h1 span{background:linear-gradient(90deg,#1F6F49,#39B57A);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero p.sub{font-size:17px;color:var(--text-muted);line-height:1.6;max-width:480px;margin-bottom:30px;}
+  .hero-ctas{display:flex;gap:12px;margin-bottom:38px;}
+  .hero-illustration{position:relative;padding:18px 0;}
+  .float-chip{position:absolute;background:#fff;border:1px solid var(--border-soft);box-shadow:var(--shadow);border-radius:999px;padding:8px 14px;font-size:13px;font-weight:600;animation:floaty 4.5s ease-in-out infinite;z-index:2;}
+  .float-chip.c1{top:-6px;right:-10px;}
+  .float-chip.c2{bottom:-10px;left:-16px;animation-delay:1.2s;}
+  @keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-9px);}}
+
+  .flow-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:18px;box-shadow:var(--shadow);padding:26px;}
+  .flow-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px dashed var(--border);font-size:14px;color:var(--text-muted);}
+  .flow-row:last-child{border-bottom:none;}
+  .flow-dot{width:26px;height:26px;border-radius:50%;background:var(--green-soft);color:var(--green-700);
+      display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;}
+  .flow-row b{color:var(--text);font-weight:600;}
+
+  .stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-soft);
+      margin:20px 6% 0;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border-soft);}
+  .stat-box{background:var(--surface);padding:26px 20px;text-align:left;}
+  .stat-box .num{font-family:'Space Grotesk';font-size:30px;font-weight:700;color:var(--green-900);}
+  .stat-box .lbl{font-size:13px;color:var(--text-muted);margin-top:4px;}
+
+  .howitworks{padding:70px 6%;}
+  .section-head{max-width:560px;margin-bottom:36px;}
+  .section-head .kicker{color:var(--green-700);font-weight:600;font-size:13px;margin-bottom:8px;}
+  .section-head h2{font-size:30px;margin-bottom:10px;}
+  .section-head p{color:var(--text-muted);font-size:15px;line-height:1.6;}
+  .steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
+  .step-card{background:var(--surface);border:1px solid var(--border-soft);border-radius:var(--radius);padding:22px;transition:transform .18s ease,border-color .18s;}
+  .step-card:hover{transform:translateY(-4px);border-color:var(--green-500);}
+  .step-card .n{width:30px;height:30px;border-radius:50%;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-family:'Space Grotesk';font-size:12px;color:var(--green-700);font-weight:700;margin-bottom:10px;}
+  .step-card h4{font-size:16px;margin-bottom:8px;}
+  .step-card p{font-size:13.5px;color:var(--text-muted);line-height:1.55;margin:0;}
+
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:0 6% 30px;}
+  .feat-card{background:linear-gradient(160deg,#fff,var(--green-soft-2));border:1px solid var(--border-soft);border-radius:var(--radius);padding:24px;transition:transform .18s ease,border-color .18s;}
+  .feat-card:hover{transform:translateY(-4px);border-color:var(--green-500);}
+  .feat-card .fi{font-size:26px;margin-bottom:10px;}
+  .feat-card h4{font-size:16px;margin-bottom:6px;}
+  .feat-card p{font-size:13.5px;color:var(--text-muted);line-height:1.55;margin:0;}
+
+  .land-footer{padding:30px 6%;border-top:1px solid var(--border-soft);display:flex;justify-content:space-between;
+      color:var(--text-faint);font-size:13px;margin-top:30px;}
+
+  /* Login */
+  #login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:
+      radial-gradient(900px 400px at 15% 0%, rgba(47,157,103,.10), transparent 60%), var(--bg); padding:24px;}
+  .login-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border-soft);
+      border-radius:18px;box-shadow:var(--shadow);padding:36px 34px;}
+  .login-card h2{font-size:23px;margin-bottom:4px;}
+  .login-card .sub{color:var(--text-muted);font-size:13.5px;margin-bottom:20px;}
+  .demo-note{background:var(--green-soft-2);border:1px dashed var(--green-600);color:var(--green-700);
+      font-size:12px;padding:9px 12px;border-radius:var(--radius-sm);margin-bottom:18px;line-height:1.45;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px;}
+  .field input, .field select, .field textarea{
+    width:100%;padding:10px 13px;border-radius:var(--radius-sm);border:1px solid var(--border);
+    font-size:14px;font-family:inherit;background:#FCFDFC;color:var(--text);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--green-500);outline-offset:1px;border-color:var(--green-500);}
+  .role-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+  .role-opt{border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 4px;text-align:center;font-size:12.5px;font-weight:600;color:var(--text-muted);cursor:pointer;}
+  .role-opt.active{border-color:var(--green-600);background:var(--green-soft);color:var(--green-700);}
+  .login-back{display:block;text-align:center;margin-top:16px;font-size:13px;color:var(--text-muted);}
+  .login-back:hover{color:var(--green-700);}
+
+  /* App shell */
+  #app-shell{display:grid;grid-template-columns:230px 1fr;min-height:100vh;}
+  .sidebar{background:linear-gradient(180deg,#0F2A1F 0%,#153A2A 60%,#1B4A35 100%);color:#EAF3ED;padding:22px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;}
+  .sidebar .logo{color:#fff;padding:0 8px 22px;}
+  .sidebar .logo .logo-mark{background:var(--green-500);}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;font-size:13.5px;
+      font-weight:500;color:#B9CBC0;margin-bottom:2px;transition:background .12s;cursor:pointer;}
+  .nav-item .ic{width:18px;text-align:center;font-size:14px;}
+  .nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+  .nav-item.active{background:linear-gradient(90deg,#278758,#2F9D67);color:#fff;box-shadow:0 4px 14px rgba(47,157,103,.35);}
+  .nav-group-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#6E8378;margin:16px 12px 6px;font-weight:700;}
+  .sidebar-bottom{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);}
+
+  .main-col{display:flex;flex-direction:column;min-width:0;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;
+      backdrop-filter:blur(8px);background:rgba(255,255,255,.88);border-bottom:1px solid var(--border-soft);position:sticky;top:0;z-index:5;}
+  .topbar h3{font-size:19px;}
+  .topbar-right{display:flex;align-items:center;gap:14px;}
+  .role-pill{background:var(--green-soft);color:var(--green-700);font-size:12px;font-weight:600;padding:5px 12px;border-radius:999px;}
+  .avatar{width:34px;height:34px;border-radius:50%;background:var(--green-700);color:#fff;display:flex;
+      align-items:center;justify-content:center;font-weight:700;font-size:13px;}
+  .page-content{padding:26px 28px 60px;flex:1;}
+  .page-content>*{animation:fadeUp .35s ease both;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px;gap:16px;flex-wrap:wrap;}
+  .page-head h2{font-size:23px;}
+  .page-head p{color:var(--text-muted);font-size:13.5px;margin-top:4px;}
+
+  .kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;}
+  .kpi-card{padding:18px;position:relative;overflow:hidden;border-top:3px solid var(--green-500);}
+  .kpi-card:hover{transform:translateY(-3px);}
+  .kpi-card .lbl{font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:8px;}
+  .kpi-card .num{font-family:'Space Grotesk';font-size:26px;font-weight:700;color:var(--green-950);}
+  .kpi-ic{width:34px;height:34px;border-radius:10px;background:var(--green-soft);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px;}
+
+  .grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;}
+  .panel{padding:20px;}
+  .panel-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+  .panel-title h4{font-size:15.5px;}
+
+  .pipeline{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:20px;padding:14px 16px;}
+  .pipe-step{background:var(--green-soft);color:var(--green-700);border-radius:999px;padding:6px 13px;font-size:12.5px;font-weight:600;}
+  .pipe-step b{font-family:'Space Grotesk';margin-left:4px;color:var(--green-950);}
+  .pipe-arrow{color:var(--text-faint);}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-faint);
+      font-weight:700;padding:0 12px 10px;border-bottom:1px solid var(--border-soft);}
+  tbody td{padding:12px;border-bottom:1px solid var(--border-soft);color:var(--text);}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:var(--green-soft-2);}
+  .row-actions{display:flex;gap:6px;}
+  .empty-row td{text-align:center;color:var(--text-faint);padding:26px;}
+
+  .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+  .toolbar input[type=text]{flex:1;min-width:180px;padding:9px 14px;border-radius:999px;border:1px solid var(--border);font-size:13.5px;background:#FCFDFC;}
+  .toolbar input[type=text]:focus{outline:2px solid var(--green-500);border-color:var(--green-500);}
+  .chip-filters{display:flex;gap:7px;flex-wrap:wrap;}
+  .chip{padding:7px 13px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid var(--border);color:var(--text-muted);background:#fff;cursor:pointer;}
+  .chip.active{background:var(--green-700);color:#fff;border-color:var(--green-700);}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,29,22,.42);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;}
+  .modal{background:#fff;border-radius:16px;padding:26px;width:100%;max-width:480px;max-height:88vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+  .modal h3{font-size:18px;margin-bottom:16px;}
+  .modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .form-grid .full{grid-column:1/-1;}
+
+  .priority-list{display:flex;flex-direction:column;gap:10px;}
+  .priority-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);
+      border:1px solid var(--border-soft);background:#FCFDFC;}
+  .priority-item .food-ic{width:36px;height:36px;border-radius:10px;background:var(--green-soft);display:flex;
+      align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+  .priority-item .meta{flex:1;min-width:0;}
+  .priority-item .meta b{display:block;font-size:13.5px;}
+  .priority-item .meta span{font-size:12px;color:var(--text-muted);}
+
+  .notif-card{display:flex;gap:12px;padding:13px 14px;border-radius:var(--radius-sm);border:1px solid var(--border-soft);margin-bottom:10px;background:#FCFDFC;}
+  .notif-card .ic{font-size:16px;}
+  .notif-card p{margin:0;font-size:13.5px;}
+  .notif-card time{font-size:11.5px;color:var(--text-faint);}
+
+  .timeline{display:flex;flex-direction:column;}
+  .tl-step{display:flex;gap:14px;position:relative;padding-bottom:26px;}
+  .tl-step:last-child{padding-bottom:0;}
+  .tl-line{position:absolute;left:12px;top:26px;bottom:0;width:2px;background:var(--border);}
+  .tl-step:last-child .tl-line{display:none;}
+  .tl-dot{width:26px;height:26px;border-radius:50%;background:#EEF1EF;color:var(--text-faint);display:flex;
+      align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;z-index:1;border:2px solid var(--bg);}
+  .tl-step.done .tl-dot{background:var(--green-600);color:#fff;}
+  .tl-content b{display:block;font-size:13.5px;}
+  .tl-content span{font-size:12px;color:var(--text-muted);}
+
+  .safety-result{border:1px solid var(--border-soft);border-radius:var(--radius);padding:22px;margin-top:18px;background:#FCFDFC;}
+  .safety-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px;}
+  .safety-stat{background:#fff;border:1px solid var(--border-soft);border-radius:var(--radius-sm);padding:12px 14px;}
+  .safety-stat .lbl{font-size:11.5px;color:var(--text-faint);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
+  .safety-stat .val{font-size:15px;font-weight:600;margin-top:3px;}
+
+  .match-card{border:1px solid var(--border-soft);border-radius:var(--radius);padding:18px;background:#FCFDFC;}
+  .match-arrow{display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--green-600);padding:6px 0;}
+  .ngo-option{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border:1px solid var(--border-soft);
+      border-radius:var(--radius-sm);margin-bottom:8px;background:#fff;}
+  .ngo-option .info b{display:block;font-size:13.5px;}
+  .ngo-option .info span{font-size:12px;color:var(--text-muted);}
+
+  .bars{display:flex;flex-direction:column;gap:12px;}
+  .bar-row{display:grid;grid-template-columns:110px 1fr 34px;align-items:center;gap:10px;font-size:12.5px;}
+  .bar-row .track{height:11px;background:var(--border-soft);border-radius:999px;overflow:hidden;}
+  .bar-row .fill{height:100%;border-radius:999px;background:var(--green-600);}
+  .bar-row .val{text-align:right;color:var(--text-muted);font-weight:600;}
+
+  .toast-wrap{position:fixed;bottom:24px;right:24px;display:flex;flex-direction:column;gap:8px;z-index:100;}
+  .toast{background:var(--green-950);color:#fff;padding:12px 18px;border-radius:10px;font-size:13.5px;box-shadow:0 8px 26px rgba(0,0,0,.25);
+      animation:toastIn .18s ease;}
+  @keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .loading-spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin .6s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  @media (max-width: 980px){
+    .hero{grid-template-columns:1fr;}
+    .stats-strip{grid-template-columns:repeat(2,1fr);}
+    .steps-grid{grid-template-columns:repeat(2,1fr);}
+    .feat-grid{grid-template-columns:1fr;}
+    .kpi-grid{grid-template-columns:repeat(3,1fr);}
+    .grid-2{grid-template-columns:1fr;}
+    .safety-grid{grid-template-columns:1fr;}
+    #app-shell{grid-template-columns:1fr;}
+    .sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;transform:translateX(-100%);transition:transform .2s;z-index:40;}
+    .sidebar.open{transform:translateX(0);}
+    .form-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width: 600px){
+    .kpi-grid{grid-template-columns:repeat(2,1fr);}
+    .land-nav-links{display:none;}
+    .hero h1{font-size:32px;}
+    .role-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media print{
+    .sidebar,.topbar,.btn,.toast-wrap{display:none!important;}
+    #app-shell{display:block;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ======================= LANDING PAGE ======================= -->
+<div id="landing">
+  <nav class="land-nav">
+    <div class="logo"><span class="logo-mark">FC</span> FoodConnect</div>
+    <div class="land-nav-links">
+      <a href="#how">How it works</a>
+      <a href="#impact">Impact</a>
+      <a href="javascript:void(0)" onclick="showDonationsPreview()">View Donations</a>
+    </div>
+    <button class="btn btn-primary" onclick="goTo('login-page')">Get Started</button>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <div class="hero-eyebrow">🌿 Smart Food Donation Management System</div>
+      <h1>Connecting <span>surplus food</span><br>with people who need it.</h1>
+      <p class="sub">FoodConnect links hotels, restaurants, hostels and event organizers with nearby NGOs and volunteers &mdash; so extra food is rescued before it expires, not after.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" onclick="goTo('login-page')">Get Started</button>
+        <button class="btn btn-ghost" onclick="showDonationsPreview()">View Donations</button>
+      </div>
+    </div>
+    <div class="hero-illustration">
+      <div class="float-chip c1">🚨 Urgent · 1.5h left</div>
+      <div class="float-chip c2">✅ 90 meals delivered</div>
+      <div class="flow-card">
+        <div class="flow-row"><span class="flow-dot">1</span> <b>Donor</b>&nbsp;lists surplus food with expiry time</div>
+        <div class="flow-row"><span class="flow-dot">2</span> System runs a <b>Smart Expiry Priority</b> check</div>
+        <div class="flow-row"><span class="flow-dot">3</span> Food is <b>matched</b> with the nearest NGO</div>
+        <div class="flow-row"><span class="flow-dot">4</span> A <b>volunteer</b> is assigned for pickup</div>
+        <div class="flow-row"><span class="flow-dot">5</span> Delivery is <b>tracked</b> until it's complete</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats-strip" id="impact">
+    <div class="stat-box"><div class="num" id="stat-donations">128</div><div class="lbl">Food Donations</div></div>
+    <div class="stat-box"><div class="num" id="stat-ngos">14</div><div class="lbl">NGOs Connected</div></div>
+    <div class="stat-box"><div class="num" id="stat-volunteers">37</div><div class="lbl">Volunteers</div></div>
+    <div class="stat-box"><div class="num" id="stat-meals">4,260</div><div class="lbl">Meals Distributed</div></div>
+  </div>
+
+  <section class="howitworks" id="how">
+    <div class="section-head">
+      <div class="kicker">HOW IT WORKS</div>
+      <h2>From leftover to delivered, in five steps</h2>
+      <p>Every donation moves through the same simple pipeline, so nothing gets lost and nothing sits until it spoils.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card"><div class="n">Step 1</div><h4>List the food</h4><p>Donor enters the food type, quantity, pickup point and remaining time before it expires.</p></div>
+      <div class="step-card"><div class="n">Step 2</div><h4>Check safety &amp; priority</h4><p>The system flags each donation as Safe, Donate Soon, Urgent, or Expired based on dynamic time left.</p></div>
+      <div class="step-card"><div class="n">Step 3</div><h4>Match an NGO</h4><p>Available donations are matched with an NGO that can collect and distribute them quickly.</p></div>
+      <div class="step-card"><div class="n">Step 4</div><h4>Assign &amp; deliver</h4><p>A volunteer is assigned for pickup, and the delivery is tracked until it's completed.</p></div>
+    </div>
+  </section>
+
+  <div class="feat-grid">
+    <div class="feat-card"><div class="fi">⏱️</div><h4>Smart Expiry Priority</h4><p>Server dynamically computes remaining hours on every request. Food closest to expiry is always pushed to the top.</p></div>
+    <div class="feat-card"><div class="fi">🔐</div><h4>Role-Based Access</h4><p>Admins manage the entire pipeline; Donors, NGOs, and Volunteers access dedicated role portals backed by SQLite and JWT.</p></div>
+    <div class="feat-card"><div class="fi">📍</div><h4>End-to-End Tracking</h4><p>Follow every donation from creation to matching, volunteer assignment and confirmed final delivery.</p></div>
+  </div>
+
+  <div class="land-footer">
+    <span>FoodConnect &middot; Smart Food Donation Management System</span>
+    <span>College project prototype &middot; SQLite + Node.js backend</span>
+  </div>
+</div>
+
+<!-- ======================= LOGIN PAGE ======================= -->
+<div id="login-page" class="hidden">
+  <div class="login-card">
+    <div class="logo" style="margin-bottom:18px;"><span class="logo-mark">FC</span> FoodConnect</div>
+    <h2>Sign in</h2>
+    <div class="sub">All four roles are verified against the SQLite database.</div>
+    <div class="demo-note" id="login-hint">Admin: <b>admin@foodconnect.org</b> / <b>admin123</b></div>
+    
+    <div class="field">
+      <label>Email / Username</label>
+      <input type="text" id="login-email" list="donor-email-list" placeholder="e.g. admin@foodconnect.org" onkeydown="if(event.key==='Enter')doLogin()">
+      <datalist id="donor-email-list"></datalist>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <div style="position:relative;">
+        <input type="password" id="login-pass" placeholder="••••••••" style="padding-right:44px;" onkeydown="if(event.key==='Enter')doLogin()">
+        <button type="button" onclick="toggleLoginPass()" id="login-pass-toggle"
+          style="position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-faint);font-size:12px;font-weight:600;padding:6px 8px;">Show</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Login as</label>
+      <div class="role-grid" id="role-grid">
+        <div class="role-opt active" data-role="Admin" onclick="pickRole(this)">Admin</div>
+        <div class="role-opt" data-role="Donor" onclick="pickRole(this)">Donor</div>
+        <div class="role-opt" data-role="NGO" onclick="pickRole(this)">NGO</div>
+        <div class="role-opt" data-role="Volunteer" onclick="pickRole(this)">Volunteer</div>
+      </div>
+    </div>
+    <div id="login-error" class="field" style="display:none;color:var(--red);font-size:12.5px;font-weight:600;margin-top:-8px;"></div>
+    <button class="btn btn-primary" id="btn-login-submit" style="width:100%;" onclick="doLogin()">Login</button>
+    <a class="login-back" href="javascript:void(0)" onclick="goTo('landing')">&larr; Back to homepage</a>
+  </div>
+</div>
+
+<!-- ======================= APP SHELL ======================= -->
+<div id="app-shell" class="hidden">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><span class="logo-mark">FC</span> FoodConnect</div>
+    <div id="sidebar-nav"></div>
+    <div class="sidebar-bottom">
+      <a class="nav-item" onclick="logout()"><span class="ic">↩</span> Logout</a>
+    </div>
+  </aside>
+
+  <div class="main-col">
+    <div class="topbar">
+      <h3 id="page-title">Dashboard</h3>
+      <div class="topbar-right">
+        <span class="role-pill" id="role-pill">Admin</span>
+        <div class="avatar" id="avatar-initial">A</div>
+      </div>
+    </div>
+    <div class="page-content" id="page-content">
+      <!-- loaded via API -->
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- Load API Client Helper -->
+<script src="api.js"></script>
+
+<script>
+/* =====================================================================
+   GLOBAL STATE & UTILS
+===================================================================== */
+var api = window.api || (typeof api !== 'undefined' ? api : null);
+let session = (api && typeof api.getUser === 'function')
+  ? (api.getUser() || { role: 'Admin', name: 'Admin User', id: null })
+  : { role: 'Admin', name: 'Admin User', id: null };
+let currentPage = 'dashboard';
+let filters = { donors:'', ngos:'', volunteers:'', donations:'', donationStatus:'All' };
+
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function toast(msg) {
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 3200);
+}
+
+function timeAgo(date) {
+  const s = Math.floor((new Date() - new Date(date)) / 1000);
+  if (isNaN(s) || s < 60) return 'just now';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
+  return Math.floor(s / 3600) + 'h ago';
+}
+
+function kpiCard(label, num) {
+  const m = [
+    ['Donors', '🏨'], ['NGOs', '🤝'], ['Volunteers', '🚲'], ['Delivered', '✅'],
+    ['Available', '🟢'], ['Matched', '🔗'], ['In Progress', '⏳'], ['Donations', '🍱'],
+    ['Meals', '🍲']
+  ];
+  const ic = (m.find(x => label.includes(x[0])) || [0, '📦'])[1];
+  return `<div class="card kpi-card"><div class="kpi-ic">${ic}</div><div class="lbl">${escapeHtml(label)}</div><div class="num">${escapeHtml(num)}</div></div>`;
+}
+
+function emptyState(msg) {
+  return `<div style="text-align:center;color:var(--text-faint);font-size:13px;padding:24px 6px;">${escapeHtml(msg)}</div>`;
+}
+
+function priorityItemHtml(p) {
+  const donorName = p.donor_name || '—';
+  return `
+    <div class="priority-item">
+      <div class="food-ic">${escapeHtml(p.icon || '🍱')}</div>
+      <div class="meta">
+        <b>${escapeHtml(p.food_name)} &middot; ${escapeHtml(p.quantity)}</b>
+        <span>${escapeHtml(donorName)} &middot; ${escapeHtml(p.pickup_location)}</span>
+      </div>
+      <span class="badge ${escapeHtml(p.badge_class || 'badge-green')}">${escapeHtml(p.remaining_hours)}h &middot; ${escapeHtml(String(p.priority_label || '').split(' — ')[0])}</span>
+    </div>
+  `;
+}
+
+function statusBadgeClass(status) {
+  return {
+    'Available': 'badge-green',
+    'Matched': 'badge-blue',
+    'Volunteer Assigned': 'badge-amber',
+    'Delivered': 'badge-grey',
+    'Expired': 'badge-red'
+  }[status] || 'badge-grey';
+}
+
+/* =====================================================================
+   NAVIGATION & LOGIN
+===================================================================== */
+function goTo(sectionId) {
+  ['landing', 'login-page'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById('app-shell').classList.add('hidden');
+  document.getElementById(sectionId).classList.remove('hidden');
+  window.scrollTo(0, 0);
+  if (sectionId === 'landing') updateLandingStats();
+}
+
+const LOGIN_HINTS = {
+  Admin: 'Admin: <b>admin@foodconnect.org</b> / <b>admin123</b>',
+  Donor: 'Sample donor: <b>greenleaf@foodconnect.org</b> / <b>donor123</b>',
+  NGO: 'Sample NGO: <b>helpinghands@foodconnect.org</b> / <b>ngo123</b>',
+  Volunteer: 'Sample volunteer: <b>arjun@foodconnect.org</b> / <b>vol123</b>'
+};
+
+async function pickRole(el) {
+  document.querySelectorAll('.role-opt').forEach(o => o.classList.remove('active'));
+  el.classList.add('active');
+  const role = el.dataset.role;
+  document.getElementById('login-hint').innerHTML = LOGIN_HINTS[role] || '';
+  showLoginError('');
+
+  const list = document.getElementById('donor-email-list');
+  const apiClient = window.api || (typeof api !== 'undefined' ? api : null);
+  if (apiClient && typeof apiClient.get === 'function') {
+    try {
+      const emails = await apiClient.get(`/public/donor-emails?role=${role}`);
+      list.innerHTML = emails.map(e => `<option value="${escapeHtml(e.email)}">${escapeHtml(e.name)}</option>`).join('');
+    } catch (err) {
+      list.innerHTML = '';
+    }
+  }
+}
+
+function toggleLoginPass() {
+  const input = document.getElementById('login-pass');
+  const btn = document.getElementById('login-pass-toggle');
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.textContent = show ? 'Hide' : 'Show';
+}
+
+function showLoginError(msg) {
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+async function doLogin() {
+  const roleEl = document.querySelector('.role-opt.active');
+  const role = roleEl ? roleEl.dataset.role : 'Admin';
+  const emailInput = document.getElementById('login-email');
+  const passInput = document.getElementById('login-pass');
+  const email = emailInput ? emailInput.value.trim() : '';
+  const pass = passInput ? passInput.value : '';
+
+  if (!email || !pass) {
+    showLoginError('Please enter email and password.');
+    return;
+  }
+
+  const apiClient = window.api || (typeof api !== 'undefined' ? api : null);
+  if (!apiClient || typeof apiClient.login !== 'function') {
+    showLoginError('Authentication service is currently unavailable. Please refresh the page.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-login-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="loading-spinner"></span> Signing in...';
+
+  try {
+    const data = await apiClient.login(email, pass, role);
+    session = data.user;
+
+    showLoginError('');
+    document.getElementById('landing').classList.add('hidden');
+    document.getElementById('login-page').classList.add('hidden');
+    document.getElementById('app-shell').classList.remove('hidden');
+    document.getElementById('role-pill').textContent = session.role;
+    document.getElementById('avatar-initial').textContent = (session.name || 'U').charAt(0).toUpperCase();
+
+    renderSidebar();
+
+    if (session.role === 'Donor') navigate('donor-dashboard');
+    else if (session.role === 'NGO') navigate('ngo-dashboard');
+    else if (session.role === 'Volunteer') navigate('vol-dashboard');
+    else navigate('dashboard');
+
+    toast(`Welcome back, ${session.name}!`);
+  } catch (err) {
+    const msg = (err && err.message) ? err.message : 'Login failed. Please check your credentials.';
+    if (msg.includes('is not defined')) {
+      showLoginError('Authentication service failed to initialize. Please refresh the page.');
+    } else if (msg.toLowerCase().includes('failed to fetch') || msg.toLowerCase().includes('networkerror')) {
+      showLoginError('Unable to connect to the authentication server. Please check your connection.');
+    } else {
+      showLoginError(msg);
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Login';
+  }
+}
+
+function logout() {
+  const apiClient = window.api || (typeof api !== 'undefined' ? api : null);
+  if (apiClient && typeof apiClient.logout === 'function') {
+    apiClient.logout();
+  }
+  session = null;
+  document.getElementById('app-shell').classList.add('hidden');
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pass').value = '';
+  showLoginError('');
+  goTo('landing');
+}
+
+window.onAuthRequired = function() {
+  logout();
+};
+
+async function showDonationsPreview() {
+  try {
+    const list = await api.get('/public/donations');
+    openModal(`
+      <h3>Live Donations</h3>
+      <p style="color:var(--text-muted);font-size:13px;margin:-8px 0 14px;">Shortest expiry first — live dynamic priorities from SQLite database.</p>
+      <div class="priority-list">
+        ${list.length ? list.map(priorityItemHtml).join('') : emptyState('No active donations right now.')}
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeModal()">Close</button>
+        <button class="btn btn-primary" onclick="closeModal();goTo('login-page')">Get Started</button>
+      </div>
+    `);
+  } catch (err) {
+    toast('Error loading preview: ' + err.message);
+  }
+}
+
+async function updateLandingStats() {
+  try {
+    const stats = await api.get('/public/stats');
+    const set = (id, v) => {
+      const e = document.getElementById(id);
+      if (e) e.textContent = Number(v).toLocaleString();
+    };
+    set('stat-donations', stats.donations);
+    set('stat-ngos', stats.ngos);
+    set('stat-volunteers', stats.volunteers);
+    set('stat-meals', stats.meals);
+  } catch (err) {
+    console.warn('Could not update landing stats:', err);
+  }
+}
+
+/* =====================================================================
+   SIDEBAR NAVIGATION
+===================================================================== */
+const PAGE_TITLES = {
+  dashboard: 'Dashboard',
+  donors: 'Donor Management',
+  ngos: 'NGO Management',
+  volunteers: 'Volunteer Management',
+  donations: 'Food Donation Management',
+  safety: 'Food Safety Check',
+  matching: 'Donation Matching',
+  assignment: 'Volunteer Assignment',
+  tracking: 'Donation Tracking',
+  reports: 'Reports',
+  notifications: 'Notifications',
+  'donor-dashboard': 'My Dashboard',
+  'my-donations': 'My Donations',
+  'ngo-dashboard': 'NGO Dashboard',
+  'ngo-food': 'Available Food',
+  'vol-dashboard': 'Volunteer Dashboard',
+  'vol-tasks': 'My Deliveries'
+};
+
+const SIDEBAR_ITEMS = {
+  Admin: [
+    { group: 'Overview', items: [['dashboard', '▤', 'Dashboard'], ['notifications', '🔔', 'Notifications']] },
+    { group: 'Directory', items: [['donors', '🏨', 'Donors'], ['ngos', '🤝', 'NGOs'], ['volunteers', '🚲', 'Volunteers']] },
+    { group: 'Donation flow', items: [
+      ['donations', '🍱', 'Food Donations'], ['safety', '✅', 'Food Safety'],
+      ['matching', '🔗', 'Donation Matching'], ['assignment', '🧑‍🤝‍🧑', 'Volunteer Assignment'],
+      ['tracking', '📍', 'Donation Tracking']
+    ]},
+    { group: 'Insights', items: [['reports', '📊', 'Reports']] }
+  ],
+  Donor: [
+    { group: 'My Account', items: [
+      ['donor-dashboard', '▤', 'My Dashboard'], ['my-donations', '🍱', 'My Donations'], ['notifications', '🔔', 'Notifications']
+    ]}
+  ],
+  NGO: [
+    { group: 'My Account', items: [
+      ['ngo-dashboard', '▤', 'My Dashboard'], ['ngo-food', '🍱', 'Available Food'], ['notifications', '🔔', 'Notifications']
+    ]}
+  ],
+  Volunteer: [
+    { group: 'My Account', items: [
+      ['vol-dashboard', '▤', 'My Dashboard'], ['vol-tasks', '🚲', 'My Deliveries'], ['notifications', '🔔', 'Notifications']
+    ]}
+  ]
+};
+
+function renderSidebar() {
+  const groups = SIDEBAR_ITEMS[session?.role] || SIDEBAR_ITEMS.Admin;
+  document.getElementById('sidebar-nav').innerHTML = groups.map(g => `
+    <div class="nav-group-label">${escapeHtml(g.group)}</div>
+    ${g.items.map(([page, icon, label]) => `
+      <a class="nav-item" data-page="${page}" onclick="navigate('${page}')"><span class="ic">${icon}</span> ${escapeHtml(label)}</a>
+    `).join('')}
+  `).join('');
+}
+
+async function navigate(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.toggle('active', n.dataset.page === page));
+  document.getElementById('page-title').textContent = PAGE_TITLES[page] || 'Dashboard';
+  
+  const content = document.getElementById('page-content');
+  content.innerHTML = '<div style="padding:40px;text-align:center;color:var(--text-faint);"><span class="loading-spinner" style="border-top-color:var(--green-700);border-color:var(--border);"></span> Loading...</div>';
+  
+  try {
+    content.innerHTML = await renderPage(page);
+  } catch (err) {
+    content.innerHTML = `<div class="card panel" style="color:var(--red);padding:24px;"><b>Failed to load view:</b> ${escapeHtml(err.message)}</div>`;
+  }
+}
+
+function refresh() {
+  navigate(currentPage);
+}
+
+async function renderPage(page) {
+  switch (page) {
+    case 'dashboard': return await renderDashboard();
+    case 'donor-dashboard': return await renderDonorDashboard();
+    case 'my-donations': return await renderMyDonations();
+    case 'donors': return await renderDonors();
+    case 'ngos': return await renderNgos();
+    case 'volunteers': return await renderVolunteers();
+    case 'donations': return await renderDonations();
+    case 'safety': return await renderSafety();
+    case 'matching': return await renderMatching();
+    case 'assignment': return await renderAssignment();
+    case 'tracking': return await renderTracking();
+    case 'reports': return await renderReports();
+    case 'notifications': return await renderNotifications();
+    case 'ngo-dashboard': return await renderNgoDash();
+    case 'ngo-food': return await renderNgoFood();
+    case 'vol-dashboard': return await renderVolDash();
+    case 'vol-tasks': return await renderVolTasks();
+    default:
+      if (session.role === 'Donor') return await renderDonorDashboard();
+      if (session.role === 'NGO') return await renderNgoDash();
+      if (session.role === 'Volunteer') return await renderVolDash();
+      return await renderDashboard();
+  }
+}
+
+/* =====================================================================
+   ADMIN DASHBOARD
+===================================================================== */
+async function renderDashboard() {
+  const [summary, priority, notifs] = await Promise.all([
+    api.get('/reports/summary'),
+    api.get('/donations/priority'),
+    api.get('/notifications')
+  ]);
+
+  const pipeline = `
+    <div class="card pipeline">
+      <span class="pipe-step">Donors<b>${summary.donors}</b></span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">Donations<b>${summary.donations}</b></span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">Matched<b>${summary.matched + summary.in_progress}</b></span>
+      <span class="pipe-arrow">→</span>
+      <span class="pipe-step">Delivered<b>${summary.delivered}</b></span>
+    </div>
+  `;
+
+  return `
+    <div class="page-head">
+      <div><h2>Welcome back, ${escapeHtml(session.name)}</h2><p>Here's what's happening across the network today.</p></div>
+    </div>
+    ${pipeline}
+    <div class="kpi-grid">
+      ${kpiCard('Total Donors', summary.donors)}
+      ${kpiCard('Total NGOs', summary.ngos)}
+      ${kpiCard('Total Volunteers', summary.volunteers)}
+      ${kpiCard('Total Donations', summary.donations)}
+      ${kpiCard('Available Donations', summary.available)}
+      ${kpiCard('Delivered Donations', summary.delivered)}
+    </div>
+    <div class="grid-2">
+      <div class="card panel">
+        <div class="panel-title"><h4>Priority Donations</h4><span class="badge badge-red">Sorted by soonest expiry</span></div>
+        <div class="priority-list">
+          ${priority.length ? priority.slice(0, 5).map(priorityItemHtml).join('') : emptyState('No active donations right now.')}
+        </div>
+      </div>
+      <div class="card panel">
+        <div class="panel-title"><h4>Recent Notifications</h4></div>
+        ${notifs.slice(0, 5).map(n => `
+          <div class="notif-card"><span class="ic">${escapeHtml(n.icon)}</span><div><p>${escapeHtml(n.text)}</p><time>${timeAgo(n.created_at)}</time></div></div>
+        `).join('') || emptyState('No notifications yet.')}
+      </div>
+    </div>
+  `;
+}
+
+/* =====================================================================
+   DONOR DASHBOARD & DONOR VIEWS
+===================================================================== */
+async function renderDonorDashboard() {
+  const [profile, donations, priority] = await Promise.all([
+    api.get('/auth/me'),
+    api.get('/donations'),
+    api.get('/donations/priority')
+  ]);
+
+  const available = donations.filter(d => d.status === 'Available').length;
+  const inProgress = donations.filter(d => d.status === 'Matched' || d.status === 'Volunteer Assigned').length;
+  const delivered = donations.filter(d => d.status === 'Delivered').length;
+
+  return `
+    <div class="page-head">
+      <div><h2>Welcome back, ${escapeHtml(profile.name)}</h2><p>${escapeHtml(profile.type)} account &middot; ${escapeHtml(profile.phone)}</p></div>
+      <button class="btn btn-primary" onclick="openDonationModal()">+ Add Donation</button>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+      ${kpiCard('Total Donations', donations.length)}
+      ${kpiCard('Available', available)}
+      ${kpiCard('In Progress', inProgress)}
+      ${kpiCard('Delivered', delivered)}
+    </div>
+    <div class="grid-2">
+      <div class="card panel">
+        <div class="panel-title"><h4>Your Priority Donations</h4><span class="badge badge-red">Sorted by soonest expiry</span></div>
+        <div class="priority-list">
+          ${priority.length ? priority.slice(0, 5).map(priorityItemHtml).join('') : emptyState('No active donations right now.')}
+        </div>
+      </div>
+      <div class="card panel">
+        <div class="panel-title"><h4>Account Details</h4></div>
+        <div class="safety-grid" style="grid-template-columns:1fr;">
+          <div class="safety-stat"><div class="lbl">Donor ID</div><div class="val">${escapeHtml(profile.id)}</div></div>
+          <div class="safety-stat"><div class="lbl">Login Email</div><div class="val">${escapeHtml(profile.email || '—')}</div></div>
+        </div>
+        <button class="btn btn-ghost" style="margin-top:14px;width:100%;" onclick="openChangePasswordModal()">Change Password</button>
+      </div>
+    </div>
+  `;
+}
+
+function openChangePasswordModal() {
+  openModal(`
+    <h3>Change Password</h3>
+    <div class="field full"><label>Current Password</label><input id="cp-current" type="password"></div>
+    <div class="field full"><label>New Password</label><input id="cp-new" type="password"></div>
+    <div class="field full"><label>Confirm New Password</label><input id="cp-confirm" type="password"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNewPassword()">Update Password</button>
+    </div>
+  `);
+}
+
+async function saveNewPassword() {
+  const current_password = document.getElementById('cp-current').value;
+  const new_password = document.getElementById('cp-new').value;
+  const confirmPass = document.getElementById('cp-confirm').value;
+
+  if (!current_password) return toast('Please enter current password.');
+  if (new_password.length < 4) return toast('New password must be at least 4 characters.');
+  if (new_password !== confirmPass) return toast('New password and confirmation do not match.');
+
+  try {
+    await api.post('/auth/change-password', { current_password, new_password });
+    toast('Password updated successfully.');
+    closeModal();
+  } catch (err) {
+    toast(err.message || 'Error updating password.');
+  }
+}
+
+async function renderMyDonations() {
+  const donations = await api.get(`/donations?search=${encodeURIComponent(filters.donations)}`);
+
+  return `
+    <div class="page-head">
+      <div><h2>My Donations</h2><p>Donations listed under your account.</p></div>
+      <button class="btn btn-primary" onclick="openDonationModal()">+ Add Donation</button>
+    </div>
+    <div class="card panel">
+      <div class="toolbar">
+        <input type="text" placeholder="Search your donations..." value="${escapeHtml(filters.donations)}" oninput="filters.donations=this.value;refresh()">
+      </div>
+      <table>
+        <thead><tr><th>ID</th><th>Food</th><th>Qty</th><th>Expiry</th><th>Status</th><th>NGO</th><th>Volunteer</th><th></th></tr></thead>
+        <tbody>
+          ${donations.length ? donations.map(d => `
+            <tr>
+              <td>${escapeHtml(d.id)}</td>
+              <td>${escapeHtml(d.food_name)}</td>
+              <td>${escapeHtml(d.quantity)}</td>
+              <td><span class="badge ${escapeHtml(d.badge_class)}">${escapeHtml(d.remaining_hours)}h</span></td>
+              <td><span class="badge ${escapeHtml(statusBadgeClass(d.status))}">${escapeHtml(d.status)}</span></td>
+              <td>${escapeHtml(d.ngo_name || '—')}</td>
+              <td>${escapeHtml(d.volunteer_name || '—')}</td>
+              <td class="row-actions">
+                ${d.status === 'Available' ? `<button class="btn btn-ghost btn-sm" onclick='openDonationModal("${d.id}")'>Edit</button>` : ''}
+              </td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="8">You haven't listed any donations yet.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* =====================================================================
+   DONOR DIRECTORY (ADMIN)
+===================================================================== */
+async function renderDonors() {
+  const rows = await api.get(`/donors?search=${encodeURIComponent(filters.donors)}`);
+
+  return `
+    <div class="page-head">
+      <div><h2>Donor Management</h2><p>Hotels, restaurants, hostels and event organizers who donate surplus food.</p></div>
+      <button class="btn btn-primary" onclick="openDonorModal()">+ Add Donor</button>
+    </div>
+    <div class="card panel">
+      <div class="toolbar">
+        <input type="text" placeholder="Search donors by name or ID..." value="${escapeHtml(filters.donors)}" oninput="filters.donors=this.value;refresh()">
+      </div>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Type</th><th>Login Email</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          ${rows.length ? rows.map(d => `
+            <tr>
+              <td>${escapeHtml(d.id)}</td>
+              <td>${escapeHtml(d.name)}</td>
+              <td>${escapeHtml(d.phone)}</td>
+              <td>${escapeHtml(d.type)}</td>
+              <td>${d.email ? escapeHtml(d.email) : `<span style="color:var(--text-faint);">not set</span>`}</td>
+              <td><span class="badge ${d.status === 'Active' ? 'badge-green' : 'badge-grey'}">${escapeHtml(d.status)}</span></td>
+              <td class="row-actions">
+                <button class="btn btn-ghost btn-sm" onclick='viewEntity("donor","${d.id}")'>View</button>
+                <button class="btn btn-ghost btn-sm" onclick='openDonorModal("${d.id}")'>Edit</button>
+                <button class="btn btn-ghost btn-sm" onclick='toggleDonorStatus("${d.id}","${d.status}")'>${d.status === 'Active' ? 'Deactivate' : 'Activate'}</button>
+                <button class="btn btn-danger btn-sm" onclick='deleteEntity("donors","${d.id}")'>Delete</button>
+              </td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="7">No donors found.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function openDonorModal(id) {
+  let donor = null;
+  if (id) {
+    donor = await api.get(`/donors/${id}`);
+  }
+
+  openModal(`
+    <h3>${donor ? 'Edit Donor' : 'Add Donor'}</h3>
+    <div class="form-grid">
+      <div class="field full"><label>Donor ID</label><input id="f-donorid" value="${donor ? escapeHtml(donor.id) : ''}" placeholder="e.g. D-105 (leave blank for auto)" ${donor ? 'disabled' : ''}></div>
+      <div class="field full"><label>Donor Name</label><input id="f-donorname" value="${donor ? escapeHtml(donor.name) : ''}" placeholder="e.g. Green Leaf Hotel"></div>
+      <div class="field"><label>Phone Number</label><input id="f-donorphone" value="${donor ? escapeHtml(donor.phone) : ''}" placeholder="98xxxxxxxx"></div>
+      <div class="field"><label>Donor Type</label>
+        <select id="f-donortype">
+          ${['Hotel', 'Restaurant', 'Hostel', 'Event Organizer'].map(t => `<option ${donor && donor.type === t ? 'selected' : ''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field full" style="border-top:1px dashed var(--border);padding-top:14px;margin-top:2px;">
+        <label>Login Email <span style="font-weight:400;color:var(--text-faint);">(used for Donor login)</span></label>
+        <input id="f-donoremail" value="${donor ? escapeHtml(donor.email || '') : ''}" placeholder="e.g. greenleaf@foodconnect.org">
+      </div>
+      <div class="field full">
+        <label>${donor ? 'Reset Password' : 'Login Password'} <span style="font-weight:400;color:var(--text-faint);">${donor ? '(leave blank to keep current password)' : ''}</span></label>
+        <input id="f-donorpass" type="text" placeholder="${donor ? '••••••••' : 'e.g. donor123'}">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDonor(${donor ? `'${id}'` : 'null'})">${donor ? 'Save Changes' : 'Add Donor'}</button>
+    </div>
+  `);
+}
+
+async function saveDonor(id) {
+  const name = document.getElementById('f-donorname').value.trim();
+  const phone = document.getElementById('f-donorphone').value.trim();
+  const type = document.getElementById('f-donortype').value;
+  const email = document.getElementById('f-donoremail').value.trim().toLowerCase();
+  const password = document.getElementById('f-donorpass').value;
+
+  if (!name || !phone) return toast('Please fill in donor name and phone.');
+
+  try {
+    if (id) {
+      await api.put(`/donors/${id}`, { name, phone, type, email, password });
+      toast('Donor updated successfully.');
+    } else {
+      const customId = document.getElementById('f-donorid').value.trim();
+      await api.post('/donors', { id: customId || undefined, name, phone, type, email, password });
+      toast('Donor added successfully.');
+    }
+    closeModal();
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error saving donor.');
+  }
+}
+
+async function toggleDonorStatus(id, currentStatus) {
+  const newStatus = currentStatus === 'Active' ? 'Inactive' : 'Active';
+  try {
+    await api.patch(`/donors/${id}/status`, { status: newStatus });
+    toast(`Donor status updated to ${newStatus}.`);
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error changing donor status.');
+  }
+}
+
+/* =====================================================================
+   NGO DIRECTORY
+===================================================================== */
+async function renderNgos() {
+  const rows = await api.get(`/ngos?search=${encodeURIComponent(filters.ngos)}`);
+
+  return `
+    <div class="page-head">
+      <div><h2>NGO Management</h2><p>Partner organizations that receive and distribute donated food.</p></div>
+      <button class="btn btn-primary" onclick="openNgoModal()">+ Add NGO</button>
+    </div>
+    <div class="card panel">
+      <div class="toolbar">
+        <input type="text" placeholder="Search NGOs by name or ID..." value="${escapeHtml(filters.ngos)}" oninput="filters.ngos=this.value;refresh()">
+      </div>
+      <table>
+        <thead><tr><th>ID</th><th>NGO Name</th><th>Location</th><th>Contact</th><th>Login Email</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          ${rows.length ? rows.map(n => `
+            <tr>
+              <td>${escapeHtml(n.id)}</td>
+              <td>${escapeHtml(n.name)}</td>
+              <td>${escapeHtml(n.location)}</td>
+              <td>${escapeHtml(n.contact)}</td>
+              <td>${n.email ? escapeHtml(n.email) : `<span style="color:var(--text-faint);">not set</span>`}</td>
+              <td><span class="badge ${n.status === 'Active' ? 'badge-green' : 'badge-grey'}">${escapeHtml(n.status)}</span></td>
+              <td class="row-actions">
+                <button class="btn btn-ghost btn-sm" onclick='openNgoModal("${n.id}")'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick='deleteEntity("ngos","${n.id}")'>Delete</button>
+              </td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="7">No NGOs found.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function openNgoModal(id) {
+  let ngo = null;
+  if (id) {
+    ngo = await api.get(`/ngos/${id}`);
+  }
+
+  openModal(`
+    <h3>${ngo ? 'Edit NGO' : 'Add NGO'}</h3>
+    <div class="form-grid">
+      <div class="field full"><label>NGO ID</label><input id="f-ngoid" value="${ngo ? escapeHtml(ngo.id) : ''}" placeholder="e.g. N-204 (leave blank for auto)" ${ngo ? 'disabled' : ''}></div>
+      <div class="field full"><label>NGO Name</label><input id="f-ngoname" value="${ngo ? escapeHtml(ngo.name) : ''}" placeholder="e.g. Helping Hands NGO"></div>
+      <div class="field"><label>Location</label><input id="f-ngoloc" value="${ngo ? escapeHtml(ngo.location) : ''}" placeholder="e.g. Chennai"></div>
+      <div class="field"><label>Contact Number</label><input id="f-ngocontact" value="${ngo ? escapeHtml(ngo.contact) : ''}" placeholder="98xxxxxxxx"></div>
+      <div class="field full" style="border-top:1px dashed var(--border);padding-top:14px;"><label>Login Email</label><input id="f-ngoemail" value="${ngo ? escapeHtml(ngo.email || '') : ''}" placeholder="e.g. helpinghands@foodconnect.org"></div>
+      <div class="field full"><label>${ngo ? 'Reset Password' : 'Login Password'}</label><input id="f-ngopass" placeholder="${ngo ? '••••••••' : 'ngo123'}"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNgo(${ngo ? `'${id}'` : 'null'})">${ngo ? 'Save Changes' : 'Add NGO'}</button>
+    </div>
+  `);
+}
+
+async function saveNgo(id) {
+  const name = document.getElementById('f-ngoname').value.trim();
+  const location = document.getElementById('f-ngoloc').value.trim();
+  const contact = document.getElementById('f-ngocontact').value.trim();
+  const email = document.getElementById('f-ngoemail').value.trim().toLowerCase();
+  const password = document.getElementById('f-ngopass').value;
+
+  if (!name || !location) return toast('Please fill in NGO name and location.');
+
+  try {
+    if (id) {
+      await api.put(`/ngos/${id}`, { name, location, contact, email, password });
+      toast('NGO updated successfully.');
+    } else {
+      const customId = document.getElementById('f-ngoid').value.trim();
+      await api.post('/ngos', { id: customId || undefined, name, location, contact, email, password });
+      toast('NGO added successfully.');
+    }
+    closeModal();
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error saving NGO.');
+  }
+}
+
+/* =====================================================================
+   VOLUNTEERS DIRECTORY
+===================================================================== */
+async function renderVolunteers() {
+  const rows = await api.get(`/volunteers?search=${encodeURIComponent(filters.volunteers)}`);
+
+  return `
+    <div class="page-head">
+      <div><h2>Volunteer Management</h2><p>Volunteers who pick up and deliver matched donations.</p></div>
+      <button class="btn btn-primary" onclick="openVolunteerModal()">+ Add Volunteer</button>
+    </div>
+    <div class="card panel">
+      <div class="toolbar">
+        <input type="text" placeholder="Search volunteers by name or ID..." value="${escapeHtml(filters.volunteers)}" oninput="filters.volunteers=this.value;refresh()">
+      </div>
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Availability</th><th>Login Email</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          ${rows.length ? rows.map(v => `
+            <tr>
+              <td>${escapeHtml(v.id)}</td>
+              <td>${escapeHtml(v.name)}</td>
+              <td>${escapeHtml(v.phone)}</td>
+              <td>${escapeHtml(v.availability)}</td>
+              <td>${v.email ? escapeHtml(v.email) : `<span style="color:var(--text-faint);">not set</span>`}</td>
+              <td><span class="badge ${v.status === 'Free' ? 'badge-green' : 'badge-amber'}">${escapeHtml(v.status)}</span></td>
+              <td class="row-actions">
+                <button class="btn btn-ghost btn-sm" onclick='openVolunteerModal("${v.id}")'>Edit</button>
+                <button class="btn btn-danger btn-sm" onclick='deleteEntity("volunteers","${v.id}")'>Delete</button>
+              </td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="7">No volunteers found.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function openVolunteerModal(id) {
+  let vol = null;
+  if (id) {
+    vol = await api.get(`/volunteers/${id}`);
+  }
+
+  openModal(`
+    <h3>${vol ? 'Edit Volunteer' : 'Add Volunteer'}</h3>
+    <div class="form-grid">
+      <div class="field full"><label>Volunteer ID</label><input id="f-volid" value="${vol ? escapeHtml(vol.id) : ''}" placeholder="e.g. V-304 (leave blank for auto)" ${vol ? 'disabled' : ''}></div>
+      <div class="field full"><label>Name</label><input id="f-volname" value="${vol ? escapeHtml(vol.name) : ''}" placeholder="e.g. Arjun Kumar"></div>
+      <div class="field"><label>Phone Number</label><input id="f-volphone" value="${vol ? escapeHtml(vol.phone) : ''}" placeholder="99xxxxxxxx"></div>
+      <div class="field"><label>Availability</label>
+        <select id="f-volavail">
+          ${['Available', 'Weekdays only', 'Weekends only', 'Unavailable'].map(a => `<option ${vol && vol.availability === a ? 'selected' : ''}>${a}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field full" style="border-top:1px dashed var(--border);padding-top:14px;"><label>Login Email</label><input id="f-volemail" value="${vol ? escapeHtml(vol.email || '') : ''}" placeholder="e.g. arjun@foodconnect.org"></div>
+      <div class="field full"><label>${vol ? 'Reset Password' : 'Login Password'}</label><input id="f-volpass" placeholder="${vol ? '••••••••' : 'vol123'}"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveVolunteer(${vol ? `'${id}'` : 'null'})">${vol ? 'Save Changes' : 'Add Volunteer'}</button>
+    </div>
+  `);
+}
+
+async function saveVolunteer(id) {
+  const name = document.getElementById('f-volname').value.trim();
+  const phone = document.getElementById('f-volphone').value.trim();
+  const availability = document.getElementById('f-volavail').value;
+  const email = document.getElementById('f-volemail').value.trim().toLowerCase();
+  const password = document.getElementById('f-volpass').value;
+
+  if (!name || !phone) return toast('Please fill in volunteer name and phone.');
+
+  try {
+    if (id) {
+      await api.put(`/volunteers/${id}`, { name, phone, availability, email, password });
+      toast('Volunteer updated successfully.');
+    } else {
+      const customId = document.getElementById('f-volid').value.trim();
+      await api.post('/volunteers', { id: customId || undefined, name, phone, availability, email, password });
+      toast('Volunteer added successfully.');
+    }
+    closeModal();
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error saving volunteer.');
+  }
+}
+
+/* =====================================================================
+   FOOD DONATIONS (ADMIN & PUBLIC WORKFLOW)
+===================================================================== */
+async function renderDonations() {
+  const [rows, priority] = await Promise.all([
+    api.get(`/donations?search=${encodeURIComponent(filters.donations)}&status=${encodeURIComponent(filters.donationStatus)}`),
+    api.get('/donations/priority')
+  ]);
+
+  return `
+    <div class="page-head">
+      <div><h2>Food Donation Management</h2><p>Every donation is dynamically screened by remaining expiry time.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-ghost" onclick="fastForward()">⏩ Simulate +1 hour</button>
+        <button class="btn btn-primary" onclick="openDonationModal()">+ Add Donation</button>
+      </div>
+    </div>
+
+    <div class="card panel" style="margin-bottom:18px;background:var(--green-soft-2);border-color:var(--green-soft);">
+      <div class="panel-title"><h4>🎯 Smart Expiry Priority</h4></div>
+      <p style="font-size:13.5px;color:var(--text-muted);margin:0 0 14px;">Our server prioritizes food based on remaining expiry time so that food close to expiry can be distributed first.</p>
+      <div class="priority-list">
+        ${priority.length ? priority.slice(0, 3).map(priorityItemHtml).join('') : emptyState('Nothing urgent right now.')}
+      </div>
+    </div>
+
+    <div class="card panel">
+      <div class="toolbar">
+        <input type="text" placeholder="Search donations by food or ID..." value="${escapeHtml(filters.donations)}" oninput="filters.donations=this.value;refresh()">
+        <div class="chip-filters">
+          ${['All', 'Available', 'Matched', 'Urgent', 'Expired', 'Delivered'].map(s => `
+            <div class="chip ${filters.donationStatus === s ? 'active' : ''}" onclick="filters.donationStatus='${s}';refresh()">${s}</div>
+          `).join('')}
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>ID</th><th>Food</th><th>Qty</th><th>Donor</th><th>Expiry</th><th>Status</th><th>NGO</th><th>Volunteer</th><th></th></tr></thead>
+        <tbody>
+          ${rows.length ? rows.map(d => `
+            <tr>
+              <td>${escapeHtml(d.id)}</td>
+              <td>${escapeHtml(d.food_name)}</td>
+              <td>${escapeHtml(d.quantity)}</td>
+              <td>${escapeHtml(d.donor_name || '—')}</td>
+              <td><span class="badge ${escapeHtml(d.badge_class)}">${escapeHtml(d.remaining_hours)}h</span></td>
+              <td><span class="badge ${escapeHtml(statusBadgeClass(d.status))}">${escapeHtml(d.status)}</span></td>
+              <td>${escapeHtml(d.ngo_name || '—')}</td>
+              <td>${escapeHtml(d.volunteer_name || '—')}</td>
+              <td class="row-actions">
+                ${d.status === 'Available' ? `<button class="btn btn-ghost btn-sm" onclick='openDonationModal("${d.id}")'>Edit</button>` : ''}
+                ${session.role === 'Admin' ? `<button class="btn btn-danger btn-sm" onclick='deleteEntity("donations","${d.id}")'>Delete</button>` : ''}
+              </td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="9">No donations match this filter.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function openDonationModal(id) {
+  let donation = null;
+  let donors = [];
+
+  try {
+    if (session.role === 'Admin') {
+      donors = await api.get('/donors');
+    }
+    if (id) {
+      donation = await api.get(`/donations/${id}`);
+    }
+  } catch (err) {
+    return toast(err.message);
+  }
+
+  openModal(`
+    <h3>${donation ? 'Edit Donation' : 'Add Donation'}</h3>
+    <div class="form-grid">
+      <div class="field full"><label>Donation ID</label><input value="${donation ? escapeHtml(donation.id) : 'auto-generated'}" disabled></div>
+      ${session.role === 'Admin' ? `
+        <div class="field full"><label>Donor</label>
+          <select id="f-donorid">
+            ${donors.map(d => `<option value="${d.id}" ${donation && donation.donor_id === d.id ? 'selected' : ''}>${escapeHtml(d.id)} — ${escapeHtml(d.name)}</option>`).join('')}
+          </select>
+        </div>
+      ` : ''}
+      <div class="field full"><label>Food Name</label><input id="f-foodname" value="${donation ? escapeHtml(donation.food_name) : ''}" placeholder="e.g. Veg Rice Meals"></div>
+      <div class="field"><label>Quantity</label><input id="f-qty" value="${donation ? escapeHtml(donation.quantity) : ''}" placeholder="e.g. 50 packets"></div>
+      <div class="field"><label>Remaining Expiry (hours)</label><input id="f-expiry" type="number" step="0.5" value="${donation ? escapeHtml(donation.remaining_hours) : ''}" placeholder="e.g. 3"></div>
+      <div class="field"><label>Food Category</label>
+        <select id="f-category">
+          ${['Cooked Meal', 'Bakery', 'Fruits', 'Vegetables', 'Packaged Food', 'Dairy'].map(c => `<option ${donation && donation.category === c ? 'selected' : ''}>${c}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Pickup Location</label><input id="f-pickup" value="${donation ? escapeHtml(donation.pickup_location) : ''}" placeholder="e.g. Anna Nagar, Chennai"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDonation(${donation ? `'${id}'` : 'null'})">${donation ? 'Save Changes' : 'Add Donation'}</button>
+    </div>
+  `);
+}
+
+async function saveDonation(id) {
+  const food_name = document.getElementById('f-foodname').value.trim();
+  const quantity = document.getElementById('f-qty').value.trim();
+  const expiry_hours = document.getElementById('f-expiry').value;
+  const category = document.getElementById('f-category').value;
+  const pickup_location = document.getElementById('f-pickup').value.trim();
+  const donorEl = document.getElementById('f-donorid');
+  const donor_id = donorEl ? donorEl.value : undefined;
+
+  if (!food_name || !quantity || expiry_hours === '') {
+    return toast('Please fill in food name, quantity and expiry.');
+  }
+
+  try {
+    if (id) {
+      await api.put(`/donations/${id}`, { food_name, quantity, expiry_hours: Number(expiry_hours), category, pickup_location, donor_id });
+      toast('Donation updated successfully.');
+    } else {
+      await api.post('/donations', { food_name, quantity, expiry_hours: Number(expiry_hours), category, pickup_location, donor_id });
+      toast('Donation added and set as Available.');
+    }
+    closeModal();
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error saving donation.');
+  }
+}
+
+async function fastForward() {
+  try {
+    const res = await api.post('/dev/advance-hours', { hours: 1 });
+    toast(res.message);
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error during time advance.');
+  }
+}
+
+/* =====================================================================
+   FOOD SAFETY CHECK
+===================================================================== */
+async function renderSafety() {
+  const donations = await api.get('/donations');
+
+  return `
+    <div class="page-head"><div><h2>Food Safety Check</h2><p>Select a donation to verify whether it is safe to distribute.</p></div></div>
+    <div class="card panel">
+      <div class="field full" style="max-width:420px;">
+        <label>Select Donation</label>
+        <select id="safety-select" onchange="runSafetyCheck(this.value)">
+          <option value="">-- choose a donation --</option>
+          ${donations.map(d => `<option value="${d.id}">${escapeHtml(d.id)} — ${escapeHtml(d.food_name)}</option>`).join('')}
+        </select>
+      </div>
+      <div id="safety-output"></div>
+    </div>
+  `;
+}
+
+async function runSafetyCheck(id) {
+  const out = document.getElementById('safety-output');
+  if (!id) { out.innerHTML = ''; return; }
+
+  try {
+    const d = await api.get(`/donations/${id}/safety`);
+    const isExpired = d.remaining_hours <= 0 || d.status === 'Expired';
+    const badgeCls = isExpired ? 'badge-red' : (d.remaining_hours <= 2 ? 'badge-red' : (d.remaining_hours <= 6 ? 'badge-amber' : 'badge-green'));
+
+    out.innerHTML = `
+      <div class="safety-result">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <h4 style="font-size:16px;">${escapeHtml(d.food_name)}</h4>
+          <span class="badge ${badgeCls}">${d.icon} ${escapeHtml(d.safety_label)}</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:13.5px;margin:8px 0 0;">${escapeHtml(d.desc)}</p>
+        <div class="safety-grid">
+          <div class="safety-stat"><div class="lbl">Quantity</div><div class="val">${escapeHtml(d.quantity)}</div></div>
+          <div class="safety-stat"><div class="lbl">Expiry Time</div><div class="val">${escapeHtml(d.remaining_hours)} hours remaining</div></div>
+          <div class="safety-stat"><div class="lbl">Donor</div><div class="val">${escapeHtml(d.donor_name)}</div></div>
+          <div class="safety-stat"><div class="lbl">Pickup Location</div><div class="val">${escapeHtml(d.pickup_location)}</div></div>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    out.innerHTML = `<div style="color:var(--red);padding:14px;">${escapeHtml(err.message)}</div>`;
+  }
+}
+
+/* =====================================================================
+   DONATION MATCHING (ADMIN)
+===================================================================== */
+async function renderMatching() {
+  const [available, ngos] = await Promise.all([
+    api.get('/donations?status=Available'),
+    api.get('/ngos')
+  ]);
+  window._matchNgos = ngos;
+
+  return `
+    <div class="page-head"><div><h2>Donation Matching</h2><p>Match available donations with an NGO that can collect them.</p></div></div>
+    <div class="card panel">
+      <div class="field full" style="max-width:420px;">
+        <label>Select an Available Donation</label>
+        <select id="match-select" onchange="renderMatchDetail(this.value)">
+          <option value="">-- choose a donation --</option>
+          ${available.map(d => `<option value="${d.id}">${escapeHtml(d.id)} — ${escapeHtml(d.food_name)} (${d.remaining_hours}h left)</option>`).join('')}
+        </select>
+      </div>
+      <div id="match-output"></div>
+    </div>
+  `;
+}
+
+async function renderMatchDetail(id) {
+  const out = document.getElementById('match-output');
+  if (!id) { out.innerHTML = ''; return; }
+
+  try {
+    const d = await api.get(`/donations/${id}`);
+    const ngos = window._matchNgos || await api.get('/ngos');
+
+    out.innerHTML = `
+      <div class="match-card">
+        <b>Donation</b>
+        <p style="margin:6px 0 0;font-size:14px;">${escapeHtml(d.food_name)} &middot; ${escapeHtml(d.quantity)}<br>
+        <span style="color:var(--text-muted);font-size:13px;">Expiry: ${escapeHtml(d.remaining_hours)}h &middot; ${escapeHtml(d.pickup_location)}</span></p>
+        <span class="badge ${escapeHtml(d.badge_class)}" style="margin-top:8px;display:inline-block;">${escapeHtml(d.priority_label)}</span>
+      </div>
+      <div class="match-arrow">↓</div>
+      <div>
+        <b style="font-size:13.5px;">Available NGOs</b>
+        <div style="margin-top:10px;">
+          ${ngos.map(n => `
+            <div class="ngo-option">
+              <div class="info"><b>${escapeHtml(n.name)}</b><span>${escapeHtml(n.location)} &middot; Contact: ${escapeHtml(n.contact)}</span></div>
+              <button class="btn btn-primary btn-sm" onclick="matchDonation('${d.id}','${n.id}')">Match Donation</button>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    out.innerHTML = `<div style="color:var(--red);padding:14px;">${escapeHtml(err.message)}</div>`;
+  }
+}
+
+async function matchDonation(donationId, ngoId) {
+  try {
+    const d = await api.post(`/donations/${donationId}/match`, { ngo_id: ngoId });
+    toast(`Donation ${d.id} matched successfully with ${d.ngo_name}.`);
+    navigate('matching');
+  } catch (err) {
+    toast(err.message || 'Error matching donation.');
+  }
+}
+
+/* =====================================================================
+   VOLUNTEER ASSIGNMENT (ADMIN)
+===================================================================== */
+async function renderAssignment() {
+  const [matched, volunteers] = await Promise.all([
+    api.get('/donations?status=Matched'),
+    api.get('/volunteers')
+  ]);
+  window._assignVolunteers = volunteers;
+
+  return `
+    <div class="page-head"><div><h2>Volunteer Assignment</h2><p>Assign a volunteer to pick up and deliver a matched donation.</p></div></div>
+    <div class="card panel">
+      <div class="field full" style="max-width:420px;">
+        <label>Select a Matched Donation</label>
+        <select id="assign-select" onchange="renderAssignDetail(this.value)">
+          <option value="">-- choose a donation --</option>
+          ${matched.map(d => `<option value="${d.id}">${escapeHtml(d.id)} — ${escapeHtml(d.food_name)}</option>`).join('')}
+        </select>
+      </div>
+      <div id="assign-output"></div>
+    </div>
+  `;
+}
+
+async function renderAssignDetail(id) {
+  const out = document.getElementById('assign-output');
+  if (!id) { out.innerHTML = ''; return; }
+
+  try {
+    const d = await api.get(`/donations/${id}`);
+    const volunteers = window._assignVolunteers || await api.get('/volunteers');
+
+    out.innerHTML = `
+      <div class="match-card">
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+          <div><b style="font-size:12px;color:var(--text-faint);">DONATION</b><p style="margin:4px 0 0;">${escapeHtml(d.food_name)} (${escapeHtml(d.quantity)})</p></div>
+          <div><b style="font-size:12px;color:var(--text-faint);">NGO</b><p style="margin:4px 0 0;">${escapeHtml(d.ngo_name || '—')}</p></div>
+        </div>
+      </div>
+      <div class="match-arrow">↓</div>
+      <b style="font-size:13.5px;">Choose a Volunteer</b>
+      <div style="margin-top:10px;">
+        ${volunteers.map(v => `
+          <div class="ngo-option">
+            <div class="info"><b>${escapeHtml(v.name)}</b><span>${escapeHtml(v.availability)} &middot; ${escapeHtml(v.phone)} &middot; Status: <span class="badge ${v.status==='Free'?'badge-green':'badge-amber'}">${escapeHtml(v.status)}</span></span></div>
+            <button class="btn btn-primary btn-sm" onclick="assignVolunteer('${d.id}','${v.id}')">Assign Volunteer</button>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } catch (err) {
+    out.innerHTML = `<div style="color:var(--red);padding:14px;">${escapeHtml(err.message)}</div>`;
+  }
+}
+
+async function assignVolunteer(donationId, volId) {
+  try {
+    const d = await api.post(`/donations/${donationId}/assign`, { volunteer_id: volId });
+    toast(`Volunteer ${d.volunteer_name} assigned for Donation #${d.id}.`);
+    navigate('assignment');
+  } catch (err) {
+    toast(err.message || 'Error assigning volunteer.');
+  }
+}
+
+/* =====================================================================
+   DONATION TRACKING
+===================================================================== */
+async function renderTracking() {
+  const donations = await api.get('/donations');
+
+  return `
+    <div class="page-head"><div><h2>Donation Tracking</h2><p>Follow a donation's status from creation through delivery.</p></div></div>
+    <div class="card panel">
+      <div class="field full" style="max-width:420px;">
+        <label>Select Donation</label>
+        <select id="track-select" onchange="renderTrackDetail(this.value)">
+          <option value="">-- choose a donation --</option>
+          ${donations.map(d => `<option value="${d.id}">${escapeHtml(d.id)} — ${escapeHtml(d.food_name)}</option>`).join('')}
+        </select>
+      </div>
+      <div id="track-output"></div>
+    </div>
+  `;
+}
+
+async function renderTrackDetail(id) {
+  const out = document.getElementById('track-output');
+  if (!id) { out.innerHTML = ''; return; }
+
+  try {
+    const d = await api.get(`/donations/${id}`);
+    const timeline = d.timeline || [];
+
+    out.innerHTML = `
+      <div style="max-width:420px;margin-top:6px;">
+        <div class="timeline">
+          ${timeline.map((t, i) => `
+            <div class="tl-step ${t.done ? 'done' : ''}">
+              <div class="tl-line"></div>
+              <div class="tl-dot">${t.done ? '✓' : (i + 1)}</div>
+              <div class="tl-content">
+                <b>${escapeHtml(t.step)}</b>
+                <span>${t.done ? `Completed ${t.completed_at ? timeAgo(t.completed_at) : ''}` : 'Pending'}</span>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        ${d.status === 'Volunteer Assigned' ? `
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="advanceStatus('${d.id}')">Advance to Delivered</button>
+        ` : (d.status === 'Available' ? `
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="navigate('matching')">Proceed to Matching &rarr;</button>
+        ` : (d.status === 'Matched' ? `
+          <button class="btn btn-primary" style="margin-top:14px;" onclick="navigate('assignment')">Proceed to Volunteer Assignment &rarr;</button>
+        ` : `<span class="badge ${statusBadgeClass(d.status)}" style="margin-top:14px;display:inline-block;">${escapeHtml(d.status)}</span>`))}
+      </div>
+    `;
+  } catch (err) {
+    out.innerHTML = `<div style="color:var(--red);padding:14px;">${escapeHtml(err.message)}</div>`;
+  }
+}
+
+async function advanceStatus(id) {
+  try {
+    const d = await api.post(`/donations/${id}/deliver`);
+    toast('Donation marked as Delivered!');
+    renderTrackDetail(id);
+  } catch (err) {
+    toast(err.message || 'Error delivering donation.');
+  }
+}
+
+/* =====================================================================
+   REPORTS
+===================================================================== */
+async function renderReports() {
+  const [summary, byType, byStatus, byPriority] = await Promise.all([
+    api.get('/reports/summary'),
+    api.get('/reports/by-donor-type'),
+    api.get('/reports/by-status'),
+    api.get('/reports/by-priority')
+  ]);
+
+  return `
+    <div class="page-head">
+      <div><h2>Reports</h2><p>A live snapshot of donation activity across the network.</p></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇ Download CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print</button>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      ${kpiCard('Total Donors', summary.donors)}
+      ${kpiCard('Total NGOs', summary.ngos)}
+      ${kpiCard('Total Volunteers', summary.volunteers)}
+      ${kpiCard('Total Donations', summary.donations)}
+      ${kpiCard('Available', summary.available)}
+      ${kpiCard('Delivered', summary.delivered)}
+    </div>
+    <div class="grid-2">
+      <div class="card panel">
+        <div class="panel-title"><h4>Donations by Donor Type</h4></div>
+        ${barChart(byType)}
+      </div>
+      <div class="card panel">
+        <div class="panel-title"><h4>Donation Status</h4></div>
+        ${barChart(byStatus)}
+      </div>
+    </div>
+    <div class="card panel" style="margin-top:18px;">
+      <div class="panel-title"><h4>Food Expiry Priority Breakdown</h4></div>
+      ${barChart(byPriority)}
+    </div>
+  `;
+}
+
+function barChart(obj) {
+  const entries = Object.entries(obj);
+  const max = Math.max(1, ...entries.map(e => e[1]));
+  return `
+    <div class="bars">${entries.map(([k, v]) => `
+      <div class="bar-row">
+        <span>${escapeHtml(k)}</span>
+        <div class="track"><div class="fill" style="width:${(v / max * 100)}%;"></div></div>
+        <span class="val">${v}</span>
+      </div>
+    `).join('')}</div>
+  `;
+}
+
+async function exportCSV() {
+  try {
+    const blob = await api.get('/reports/export.csv');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'foodconnect-donations-report.csv';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    toast('Report downloaded.');
+  } catch (err) {
+    toast('Error exporting CSV: ' + err.message);
+  }
+}
+
+/* =====================================================================
+   NOTIFICATIONS
+===================================================================== */
+async function renderNotifications() {
+  const list = await api.get('/notifications');
+
+  return `
+    <div class="page-head">
+      <div><h2>Notifications</h2><p>Real activity and smart expiry alerts recorded by the server.</p></div>
+      ${list.length ? `<button class="btn btn-ghost btn-sm" onclick="clearNotifications()">Clear all</button>` : ''}
+    </div>
+    <div class="card panel">
+      ${list.length ? list.map(n => `
+        <div class="notif-card">
+          <span class="ic">${escapeHtml(n.icon)}</span>
+          <div style="flex:1;"><p>${escapeHtml(n.text)}</p><time>${timeAgo(n.created_at)}</time></div>
+          <button class="btn btn-ghost btn-sm" onclick="deleteNotification(${n.id})" title="Dismiss" style="padding:4px 9px;">✕</button>
+        </div>
+      `).join('') : emptyState('No notifications yet — actions like adding donations or matching NGOs will appear here.')}
+    </div>
+  `;
+}
+
+async function deleteNotification(id) {
+  try {
+    await api.delete(`/notifications/${id}`);
+    refresh();
+  } catch (err) {
+    toast(err.message);
+  }
+}
+
+function clearNotifications() {
+  openModal(`
+    <h3>Clear All Notifications</h3>
+    <p style="color:var(--text-muted);font-size:13.5px;margin-bottom:16px;">Are you sure you want to clear all notifications? This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="doClearNotifications()">Clear all</button>
+    </div>
+  `);
+}
+
+async function doClearNotifications() {
+  try {
+    await api.delete('/notifications');
+    closeModal();
+    toast('Notifications cleared.');
+    refresh();
+  } catch (err) {
+    toast(err.message);
+  }
+}
+
+/* =====================================================================
+   NGO PORTAL
+===================================================================== */
+async function renderNgoDash() {
+  const [profile, donations] = await Promise.all([
+    api.get('/auth/me'),
+    api.get('/donations')
+  ]);
+
+  const delivered = donations.filter(d => d.status === 'Delivered');
+  const inProgress = donations.filter(d => d.status !== 'Delivered' && d.status !== 'Expired');
+  const mealsCount = delivered.reduce((acc, d) => acc + (parseInt(d.quantity) || 0), 0);
+
+  return `
+    <div class="page-head">
+      <div><h2>Welcome, ${escapeHtml(profile.name)}</h2><p>${escapeHtml(profile.location)} &middot; ${escapeHtml(profile.contact)}</p></div>
+      <button class="btn btn-primary" onclick="navigate('ngo-food')">Browse Available Food</button>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr);">
+      ${kpiCard('Donations Matched', donations.length)}
+      ${kpiCard('In Progress', inProgress.length)}
+      ${kpiCard('Delivered', delivered.length)}
+      ${kpiCard('Meals Received', mealsCount)}
+    </div>
+    <div class="card panel">
+      <div class="panel-title"><h4>Your Claimed Donations</h4></div>
+      <table>
+        <thead><tr><th>ID</th><th>Food</th><th>Qty</th><th>Donor</th><th>Pickup</th><th>Volunteer</th><th>Status</th></tr></thead>
+        <tbody>
+          ${donations.length ? donations.map(d => `
+            <tr>
+              <td>${escapeHtml(d.id)}</td>
+              <td>${escapeHtml(d.food_name)}</td>
+              <td>${escapeHtml(d.quantity)}</td>
+              <td>${escapeHtml(d.donor_name || '—')}</td>
+              <td>${escapeHtml(d.pickup_location)}</td>
+              <td>${escapeHtml(d.volunteer_name || 'awaiting volunteer')}</td>
+              <td><span class="badge ${statusBadgeClass(d.status)}">${escapeHtml(d.status)}</span></td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="7">Nothing claimed yet — browse Available Food to claim surplus meals.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function renderNgoFood() {
+  const available = await api.get('/donations?status=Available');
+
+  return `
+    <div class="page-head">
+      <div><h2>Available Food</h2><p>Claim donations for your NGO — shortest expiry first.</p></div>
+    </div>
+    <div class="card panel">
+      <table>
+        <thead><tr><th>ID</th><th>Food</th><th>Qty</th><th>Donor</th><th>Pickup</th><th>Expiry</th><th>Priority</th><th></th></tr></thead>
+        <tbody>
+          ${available.length ? available.map(d => `
+            <tr>
+              <td>${escapeHtml(d.id)}</td>
+              <td>${escapeHtml(d.food_name)}</td>
+              <td>${escapeHtml(d.quantity)}</td>
+              <td>${escapeHtml(d.donor_name || '—')}</td>
+              <td>${escapeHtml(d.pickup_location)}</td>
+              <td><span class="badge ${escapeHtml(d.badge_class)}">${escapeHtml(d.remaining_hours)}h</span></td>
+              <td><span class="badge ${escapeHtml(d.badge_class)}">${escapeHtml(String(d.priority_label || '').split(' — ')[0])}</span></td>
+              <td><button class="btn btn-primary btn-sm" onclick="claimDonation('${d.id}')">Claim</button></td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="8">No available donations right now.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function claimDonation(id) {
+  try {
+    const d = await api.post(`/donations/${id}/claim`);
+    toast(`Successfully claimed ${d.food_name}. Admin will assign a volunteer.`);
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error claiming donation.');
+  }
+}
+
+/* =====================================================================
+   VOLUNTEER PORTAL
+===================================================================== */
+async function renderVolDash() {
+  const [profile, deliveries] = await Promise.all([
+    api.get('/auth/me'),
+    api.get('/donations')
+  ]);
+
+  const active = deliveries.filter(d => d.status === 'Volunteer Assigned');
+  const delivered = deliveries.filter(d => d.status === 'Delivered');
+  const mealsCount = delivered.reduce((acc, d) => acc + (parseInt(d.quantity) || 0), 0);
+
+  return `
+    <div class="page-head">
+      <div><h2>Welcome, ${escapeHtml(profile.name)}</h2><p>${escapeHtml(profile.phone)} &middot; ${escapeHtml(profile.availability)} &middot; <span class="badge ${profile.status==='Free'?'badge-green':'badge-amber'}">${escapeHtml(profile.status)}</span></p></div>
+      <button class="btn btn-primary" onclick="navigate('vol-tasks')">View My Deliveries</button>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
+      ${kpiCard('Active Deliveries', active.length)}
+      ${kpiCard('Completed', delivered.length)}
+      ${kpiCard('Meals Delivered', mealsCount)}
+    </div>
+    <div class="card panel">
+      <div class="panel-title"><h4>Pickups Waiting For You</h4></div>
+      <div class="priority-list">
+        ${active.length ? active.map(priorityItemHtml).join('') : emptyState('No active pickups assigned right now.')}
+      </div>
+    </div>
+  `;
+}
+
+async function renderVolTasks() {
+  const deliveries = await api.get('/donations');
+
+  return `
+    <div class="page-head">
+      <div><h2>My Deliveries</h2><p>Pick up from the donor, deliver to the NGO, then mark it delivered.</p></div>
+    </div>
+    <div class="card panel">
+      <table>
+        <thead><tr><th>ID</th><th>Food</th><th>Qty</th><th>Pickup from</th><th>Deliver to</th><th>Expiry</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          ${deliveries.length ? deliveries.map(d => `
+            <tr>
+              <td>${escapeHtml(d.id)}</td>
+              <td>${escapeHtml(d.food_name)}</td>
+              <td>${escapeHtml(d.quantity)}</td>
+              <td>${escapeHtml(d.pickup_location)}</td>
+              <td>${escapeHtml(d.ngo_name || '—')}</td>
+              <td><span class="badge ${escapeHtml(d.badge_class)}">${escapeHtml(d.remaining_hours)}h</span></td>
+              <td><span class="badge ${statusBadgeClass(d.status)}">${escapeHtml(d.status)}</span></td>
+              <td>
+                ${d.status === 'Volunteer Assigned' ? `<button class="btn btn-primary btn-sm" onclick="markDelivered('${d.id}')">Mark Delivered</button>` : ''}
+              </td>
+            </tr>
+          `).join('') : `<tr class="empty-row"><td colspan="8">No deliveries assigned yet.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+async function markDelivered(id) {
+  try {
+    const d = await api.post(`/donations/${id}/deliver`);
+    toast('Delivery completed — thank you!');
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error delivering donation.');
+  }
+}
+
+/* =====================================================================
+   SHARED MODALS & ENTITY ACTIONS
+===================================================================== */
+function openModal(innerHtml) {
+  closeModal();
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'modal-overlay';
+  overlay.onclick = (e) => { if (e.target === overlay) closeModal(); };
+  overlay.innerHTML = `<div class="modal">${innerHtml}</div>`;
+  document.body.appendChild(overlay);
+}
+
+function closeModal() {
+  const m = document.getElementById('modal-overlay');
+  if (m) m.remove();
+}
+
+function deleteEntity(collection, id) {
+  openModal(`
+    <h3>Confirm Deletion</h3>
+    <p style="color:var(--text-muted);font-size:13.5px;margin-bottom:16px;">Are you sure you want to delete ${escapeHtml(id)}? This cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-danger" onclick="doDeleteEntity('${collection}','${id}')">Delete</button>
+    </div>
+  `);
+}
+
+async function doDeleteEntity(collection, id) {
+  try {
+    await api.delete(`/${collection}/${id}`);
+    closeModal();
+    toast('Deleted successfully.');
+    refresh();
+  } catch (err) {
+    toast(err.message || 'Error deleting record.');
+  }
+}
+
+async function viewEntity(type, id) {
+  if (type === 'donor') {
+    try {
+      const d = await api.get(`/donors/${id}`);
+      const donations = d.donations || [];
+      openModal(`
+        <h3>${escapeHtml(d.name)}</h3>
+        <p style="color:var(--text-muted);font-size:13.5px;">${escapeHtml(d.type)} &middot; ${escapeHtml(d.phone)}${d.email ? ` &middot; ${escapeHtml(d.email)}` : ''}</p>
+        <div style="margin-top:14px;"><b style="font-size:13px;">Donations from this donor (${donations.length})</b>
+          <div style="margin-top:8px;">
+            ${donations.length ? donations.map(x => `
+              <div class="ngo-option">
+                <div class="info"><b>${escapeHtml(x.food_name)}</b><span>${escapeHtml(x.quantity)} &middot; ${escapeHtml(x.status)}</span></div>
+              </div>
+            `).join('') : emptyState('No donations yet.')}
+          </div>
+        </div>
+        <div class="modal-actions"><button class="btn btn-ghost" onclick="closeModal()">Close</button></div>
+      `);
+    } catch (err) {
+      toast(err.message);
+    }
+  }
+}
+
+/* =====================================================================
+   INITIALIZATION
+===================================================================== */
+async function initApp() {
+  updateLandingStats();
+
+  // If user already logged in with stored JWT
+  const apiClient = window.api || (typeof api !== 'undefined' ? api : null);
+  if (apiClient && typeof apiClient.getToken === 'function' && apiClient.getToken() && session) {
+    try {
+      const me = await apiClient.get('/auth/me');
+      session = { ...session, ...me };
+      if (typeof apiClient.setUser === 'function') {
+        apiClient.setUser(session);
+      }
+      document.getElementById('role-pill').textContent = session.role;
+      document.getElementById('avatar-initial').textContent = (session.name || 'U').charAt(0).toUpperCase();
+      renderSidebar();
+    } catch (e) {
+      // Token invalid/expired
+      if (typeof apiClient.logout === 'function') {
+        apiClient.logout();
+      }
+    }
+  }
+}
+
+initApp();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "FoodConnect",
+  "description": "Smart Food Donation Management System connecting surplus food from donors with NGOs and volunteers.",
+  "permissions": [],
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
